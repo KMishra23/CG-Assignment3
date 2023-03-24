@@ -14,6 +14,8 @@ export class Shader{
         
         // Creates a position buffer for future purpose
         this.positionBuffer = gl.createBuffer();
+        this.indexBuffer = gl.createBuffer();
+        this.colorBuffer = gl.createBuffer();
     }
 
     createShader(type, source) {
@@ -69,6 +71,11 @@ export class Shader{
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.DYNAMIC_DRAW);
     }
 
+    bindIndexBuffer(data, buffer) {
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
+		this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), this.gl.DYNAMIC_DRAW);
+    }
+
     fillAttributeData(attribName, size, type, normalize, stride, offset) {
         // We then fill the attribute data here, specify its size, type, stride, etc and to which attribute its going to.
         this.gl.enableVertexAttribArray(this.gl.getAttribLocation(this.program, attribName));
@@ -77,5 +84,9 @@ export class Shader{
 
     drawArrays(primitiveType, numElements) {
         this.gl.drawArrays(primitiveType, 0, numElements);
+    }
+
+    drawElements(count) {
+        this.gl.drawElements(this.gl.TRIANGLES, count, this.gl.UNSIGNED_SHORT, 0)
     }
 }

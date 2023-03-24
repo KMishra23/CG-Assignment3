@@ -7,6 +7,7 @@ import { Camera } from "./camera.js";
 import { Circle } from "./circle.js";
 import { Model } from "./model.js";
 import { PolygonField } from "./polygonField.js";
+import { GameManager } from "./game.js";
 import { vec3, mat4, vec4, mat3 } from 'https://cdn.skypack.dev/gl-matrix';
 import * as dat from 'https://cdn.skypack.dev/dat.gui';
 
@@ -44,11 +45,6 @@ function main() {
   shader.use()
   // Program creation and shaders compiled
 
-  var temp = mat4.create()
-  mat4.identity(temp)
-  var vec = vec3.create()
-  vec3.set(vec, 150, 150, -5)
-  // mat4.translate(temp, )
 
   var near = 0.0001
   var far = 100
@@ -58,34 +54,26 @@ function main() {
   )
   scene.addCamera(camera)
 
-  var circle1 = new Circle (
-    1, [0, 0, 0], [1.0, 0.0, 0.0, 1]
-  )
 
-  var circle2 = new Circle (
-    1, [0, 0, 5], [0.0, 1.0, 0.0, 1]
-  )
-
-  var circle3 = new Circle (
-    1, [0, 0, -5], [0.0, 0.0, 1.0, 1]
-  )
-  // scene.add(circle1)
-  // scene.add(circle2)
-  // scene.add(circle3)
-
-  var field = new PolygonField([0, 0, 0], 5, 10, [1.0, 0.0, 0, 1])
+  var field = new PolygonField([0, 0, -5], 15, 10, [1.0, 0.0, 0, 1])
   scene.add(field)
 
-  var model1 = new Model([0, 0, 0], './models/char.obj', "Character", [0.0, 0.0, 1.0, 1]);
-  // scene.add(model1)
+  var model1 = new Model([0, 0, 0], './models/Cube.obj', "Cube", [0.0, 0.0, 1.0, 1]);
+  // scene.addModel(model1)
   
+  var model2 = new Model([0, 0, 0], './models/Cube.obj', "Character", [0.0, 0.0, 1.0, 1]);
+  // scene.addModel(model2)
+
+  model2.transform.setScale(0.5, 0.5, 0.5)
+
+  const gameManager = new GameManager(field, 7, scene)
+
   const gui = new dat.GUI();
 
   const transformSettings = {
     fov: 90,
     near: 0.0001,
     far: 100,
-    sides: 5
   }
 
   gui.add(transformSettings, 'fov', 30, 180).step(0.01).onChange(function ()
@@ -102,10 +90,36 @@ function main() {
   {
     scene.camera.updateFar(transformSettings.far)
   });
-  gui.add(transformSettings, 'sides', 3, 20).step(1).onChange(function ()
-  {
-    field.changeSides(transformSettings.sides)
-  });
+  // gui.add(transformSettings, 'sides', 3, 20).step(1).onChange(function ()
+  // {
+  //   gameManager.field.changeSides(transformSettings.sides)
+  //   gameManager.updatePlayers(transformSettings.players)
+  // });
+  // gui.add(transformSettings, 'players', 3, 20).step(1).onChange(function ()
+  // {
+  //   gameManager.updatePlayers(transformSettings.players)
+  // });
+
+
+  document.addEventListener('keydown', event => {
+    if(event.key == "c") {
+      scene.camera.switchMode()
+    }
+    if(event.key == "1") {
+      gameManager.field.changeSides(gameManager.field.sides - 1)
+      gameManager.updatePlayers(gameManager.playerCount)
+    }
+    if(event.key == "2") {
+      gameManager.field.changeSides(gameManager.field.sides + 1)
+      gameManager.updatePlayers(gameManager.playerCount)
+    }
+    if(event.key == "9") {
+      gameManager.updatePlayers(gameManager.playerCount - 1)
+    }
+    if(event.key == "0") {
+      gameManager.updatePlayers(gameManager.playerCount + 1)
+    }
+  })
 
   renderer.render(scene, shader, true)
 

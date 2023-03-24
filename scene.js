@@ -4,6 +4,7 @@ export class Scene {
     constructor (width, height) {
         // Creates a primitive list and canvas size
         this.primitives = []
+        this.models = []
         this.canvasWidth = width;
         this.canvasHeight = height;
     }
@@ -15,15 +16,35 @@ export class Scene {
         }
     }
 
+    async addModel(model) {
+        const response = await model.loadModel()
+        // console.log(response)
+        if(this.models && model) {
+            this.models.push(model)
+            console.log(model.type + " was added to the scene")
+        }  
+    }
+
     addCamera(camera) {
         this.camera = camera;
     }
 
-    delete(primitive) {
+    deletePrimitive(primitive) {
         if(this.primitives && primitive) {
             let i = this.primitives.indexOf(primitive);
             if(i > -1) {
+                // console.log("Deleted")
                 this.primitives.splice(i, 1);
+            }
+        }
+    }
+
+    deleteModel(model) {
+        if(this.models && model) {
+            let i = this.models.indexOf(model);
+            if(i > -1) {
+                // console.log("Deleted")
+                this.models.splice(i, 1);
             }
         }
     }
