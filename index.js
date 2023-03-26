@@ -58,8 +58,8 @@ function main() {
   var field = new PolygonField([0, 0, -5], 15, 10, [1.0, 0.0, 0, 1])
   scene.add(field)
 
-  var model1 = new Model([0, 0, 0], './models/Cube.obj', "Cube", [0.0, 0.0, 1.0, 1]);
-  // scene.addModel(model1)
+  var model1 = new Model([0, 0, 0], './models/star.obj', "Cube", [0.0, 0.0, 1.0, 1]);
+  scene.addModel(model1)
   
   var model2 = new Model([0, 0, 0], './models/Cube.obj', "Character", [0.0, 0.0, 1.0, 1]);
   // scene.addModel(model2)
@@ -74,6 +74,9 @@ function main() {
     fov: 90,
     near: 0.0001,
     far: 100,
+    angleX: 0,
+    angleY: 0,
+    angleZ: 0,
   }
 
   gui.add(transformSettings, 'fov', 30, 180).step(0.01).onChange(function ()
@@ -90,35 +93,38 @@ function main() {
   {
     scene.camera.updateFar(transformSettings.far)
   });
-  // gui.add(transformSettings, 'sides', 3, 20).step(1).onChange(function ()
-  // {
-  //   gameManager.field.changeSides(transformSettings.sides)
-  //   gameManager.updatePlayers(transformSettings.players)
-  // });
-  // gui.add(transformSettings, 'players', 3, 20).step(1).onChange(function ()
-  // {
-  //   gameManager.updatePlayers(transformSettings.players)
-  // });
+  gui.add(transformSettings, 'angleX', 0, 2*Math.PI).step(0.01).onChange(function ()
+  {
+    model1.transform.setQuaternionAngles(transformSettings.angleX, transformSettings.angleY, transformSettings.angleZ)
+  });
+  gui.add(transformSettings, 'angleY', 0, 2*Math.PI).step(0.01).onChange(function ()
+  {
+    model1.transform.setQuaternionAngles(transformSettings.angleX, transformSettings.angleY, transformSettings.angleZ)
+  });
+  gui.add(transformSettings, 'angleZ', 0, 2*Math.PI).step(0.01).onChange(function ()
+  {
+    model1.transform.setQuaternionAngles(transformSettings.angleX, transformSettings.angleY, transformSettings.angleZ)
+  });
 
 
   document.addEventListener('keydown', event => {
     if(event.key == "c") {
       scene.camera.switchMode()
     }
-    if(event.key == "1") {
-      gameManager.field.changeSides(gameManager.field.sides - 1)
-      gameManager.updatePlayers(gameManager.playerCount)
-    }
-    if(event.key == "2") {
-      gameManager.field.changeSides(gameManager.field.sides + 1)
-      gameManager.updatePlayers(gameManager.playerCount)
-    }
-    if(event.key == "9") {
-      gameManager.updatePlayers(gameManager.playerCount - 1)
-    }
-    if(event.key == "0") {
-      gameManager.updatePlayers(gameManager.playerCount + 1)
-    }
+    // if(event.key == "1") {
+    //   gameManager.field.changeSides(gameManager.field.sides - 1)
+    //   gameManager.updatePlayers(gameManager.playerCount)
+    // }
+    // if(event.key == "2") {
+    //   gameManager.field.changeSides(gameManager.field.sides + 1)
+    //   gameManager.updatePlayers(gameManager.playerCount)
+    // }
+    // if(event.key == "9") {
+    //   gameManager.updatePlayers(gameManager.playerCount - 1)
+    // }
+    // if(event.key == "0") {
+    //   gameManager.updatePlayers(gameManager.playerCount + 1)
+    // }
   })
 
   renderer.render(scene, shader, true)

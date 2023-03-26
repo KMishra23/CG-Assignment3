@@ -37,7 +37,7 @@ export class GameManager {
                 // console.log(this.field.cornerList[i])
                 model.transform.setPosition(temp[k][0], temp[k][1], temp[k][2])
             }
-            temp.splice(k, 1)
+            temp.splice (k, 1)
         }
     }
 }

@@ -1,4 +1,4 @@
-import { vec3, mat4, vec4, mat3 } from 'https://cdn.skypack.dev/gl-matrix';
+import { vec3, mat4, vec4, mat3, quat } from 'https://cdn.skypack.dev/gl-matrix';
 
 export class Transform
 {
@@ -14,6 +14,11 @@ export class Transform
 		this.rotationPoint = [0, 0, 0];
 		this.rotationAxis = vec3.create();
 		vec3.set(this.rotationAxis, 0, 0, 0);
+
+		this.angleX = 0;
+		this.angleY = 0;
+		this.angleZ = 0;
+		this.quaternion = quat.create()
 
 		this.modelTransformMatrix = mat4.create();
 		mat4.identity(this.modelTransformMatrix);
@@ -39,13 +44,24 @@ export class Transform
 
 		//rotation about the set point (either origin or if some other point set by the shape)
 		//first, translate to origin about that point
+		// this.rotationMat = mat4.create();
+		// var temp = vec3.create();
+		// vec3.set(temp, this.rotationPoint[0], this.rotationPoint[1], this.rotationPoint[2]);
+		// mat4.translate(this.rotationMat, identity, temp);
+		// mat4.rotate(this.rotationMat, this.rotationMat, this.rotationAngle, this.rotationAxis);
+		// vec3.set(temp, -this.rotationPoint[0], -this.rotationPoint[1], -this.rotationPoint[2]);
+		// mat4.translate(this.rotationMat, this.rotationMat, temp);
+
 		this.rotationMat = mat4.create();
-		var temp = vec3.create();
-		vec3.set(temp, this.rotationPoint[0], this.rotationPoint[1], this.rotationPoint[2]);
-		mat4.translate(this.rotationMat, identity, temp);
-		mat4.rotate(this.rotationMat, this.rotationMat, this.rotationAngle, this.rotationAxis);
-		vec3.set(temp, -this.rotationPoint[0], -this.rotationPoint[1], -this.rotationPoint[2]);
-		mat4.translate(this.rotationMat, this.rotationMat, temp);
+		// var temp = vec3.create();
+		// vec3.set(temp, this.rotationPoint[0], this.rotationPoint[1], this.rotationPoint[2]);
+		// mat4.translate(this.rotationMat, identity, temp);
+
+		mat4.fromQuat(this.rotationMat, this.quaternion);
+
+		// vec3.set(temp, -this.rotationPoint[0], -this.rotationPoint[1], -this.rotationPoint[2]);
+		// mat4.translate(this.rotationMat, this.rotationMat, temp);
+
 
 		// Scaling
 		this.scalingMat = mat4.create();
@@ -90,7 +106,13 @@ export class Transform
 		vec3.set(this.scale, x, y, z);
 	}
 
-	getPosition() {
-		return this.modelTransformMatrix
+	setQuaternionAngles(x, y, z) {
+		quat.identity(this.quaternion)
+		this.angleX = x
+		this.angleY = y
+		this.angleZ = z
+		quat.rotateX(this.quaternion, this.quaternion, x)
+		quat.rotateY(this.quaternion, this.quaternion, y)
+		quat.rotateZ(this.quaternion, this.quaternion, z)
 	}
 }
