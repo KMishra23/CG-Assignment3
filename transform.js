@@ -8,6 +8,9 @@ export class Transform
 		vec3.set(this.translate, 0, 0, 0);
 		
 		this.scale = vec3.create();
+		this.scaleX = 1;
+		this.scaleY = 1;
+		this.scaleZ = 1;
 		vec3.set(this.scale, 1, 1, 1);
 		
 		this.rotationAngle = 0;
@@ -103,16 +106,38 @@ export class Transform
 	}
 
 	setScale(x, y, z) {
+		this.scaleX = x
+		this.scaleY = y
+		this.scaleZ = z
 		vec3.set(this.scale, x, y, z);
 	}
 
+	scaling(x, y, z) {
+		this.scaleX += x
+		this.scaleY += y
+		this.scaleZ += z
+		vec3.set(this.scale, this.scaleX, this.scaleY, this.scaleZ)
+	}
+
 	setQuaternionAngles(x, y, z) {
+		// x = x * Math.PI/180
+		// y = y * Math.PI/180
+		// z = z * Math.PI/180
 		quat.identity(this.quaternion)
 		this.angleX = x
 		this.angleY = y
 		this.angleZ = z
-		quat.rotateX(this.quaternion, this.quaternion, x)
-		quat.rotateY(this.quaternion, this.quaternion, y)
-		quat.rotateZ(this.quaternion, this.quaternion, z)
+		// quat.rotateX(this.quaternion, this.quaternion, x)
+		// quat.rotateY(this.quaternion, this.quaternion, y)
+		// quat.rotateZ(this.quaternion, this.quaternion, z)
+		quat.fromEuler(this.quaternion, x, y, z)
+	}
+
+	quaternionRotation(x, y, z) {
+		quat.identity(this.quaternion)
+		this.angleX += x
+		this.angleY += y
+		this.angleZ += z
+		quat.fromEuler(this.quaternion, this.angleX, this.angleY, this.angleZ)
 	}
 }

@@ -8,8 +8,11 @@ import { Circle } from "./circle.js";
 import { Model } from "./model.js";
 import { PolygonField } from "./polygonField.js";
 import { GameManager } from "./game.js";
+import { KeyboardEventManager } from "./keyboardEventManager.js";
 import { vec3, mat4, vec4, mat3 } from 'https://cdn.skypack.dev/gl-matrix';
 import * as dat from 'https://cdn.skypack.dev/dat.gui';
+import webglObjLoader from 'https://cdn.skypack.dev/webgl-obj-loader';
+
 
 main();
 
@@ -45,7 +48,6 @@ function main() {
   shader.use()
   // Program creation and shaders compiled
 
-
   var near = 0.0001
   var far = 100
   var fov = 90
@@ -55,36 +57,39 @@ function main() {
   scene.addCamera(camera)
 
 
-  var field = new PolygonField([0, 0, -5], 15, 10, [1.0, 0.0, 0, 1])
+  var field = new PolygonField([0, 0, -5], 8, 10, [1.0, 0.0, 0, 1])
   scene.add(field)
 
-  var model1 = new Model([0, 0, 0], './models/star.obj', "Cube", [0.0, 0.0, 1.0, 1]);
-  scene.addModel(model1)
+  var model1 = new Model([0, 0, 0], './models/moai.obj', "Cube", [0, 255, 0, 1]);
+  model1.transform.setScale(3, 3, 3)
+  model1.transform.setPosition(0, 0, 0)
+  // scene.addModel(model1)
   
-  var model2 = new Model([0, 0, 0], './models/Cube.obj', "Character", [0.0, 0.0, 1.0, 1]);
+  var model2 = new Model([0, 0, 0], './models/Cube.obj', "Character", [0, 0, 255, 1]);
   // scene.addModel(model2)
 
   model2.transform.setScale(0.5, 0.5, 0.5)
 
-  const gameManager = new GameManager(field, 7, scene)
-
+  const gameManager = new GameManager(field, 5, scene)
+  var gameStatus = 0
+  
   const gui = new dat.GUI();
 
   const transformSettings = {
     fov: 90,
-    near: 0.0001,
+    near: 0.01,
     far: 100,
     angleX: 0,
     angleY: 0,
     angleZ: 0,
   }
 
-  gui.add(transformSettings, 'fov', 30, 180).step(0.01).onChange(function ()
+  gui.add(transformSettings, 'fov', 1, 180).step(0.01).onChange(function ()
   {
     scene.camera.updateFOV(transformSettings.fov)
   });
 
-  gui.add(transformSettings, 'near', 0, 50).step(0.01).onChange(function ()
+  gui.add(transformSettings, 'near', 0.01, 50).step(0.01).onChange(function ()
   { 
     scene.camera.updateNear(transformSettings.near)
   });
@@ -93,39 +98,89 @@ function main() {
   {
     scene.camera.updateFar(transformSettings.far)
   });
-  gui.add(transformSettings, 'angleX', 0, 2*Math.PI).step(0.01).onChange(function ()
+  gui.add(transformSettings, 'angleX', 0, 360).step(0.01).onChange(function ()
   {
     model1.transform.setQuaternionAngles(transformSettings.angleX, transformSettings.angleY, transformSettings.angleZ)
   });
-  gui.add(transformSettings, 'angleY', 0, 2*Math.PI).step(0.01).onChange(function ()
+  gui.add(transformSettings, 'angleY', 0, 360).step(0.01).onChange(function ()
   {
     model1.transform.setQuaternionAngles(transformSettings.angleX, transformSettings.angleY, transformSettings.angleZ)
   });
-  gui.add(transformSettings, 'angleZ', 0, 2*Math.PI).step(0.01).onChange(function ()
+  gui.add(transformSettings, 'angleZ', 0, 360).step(0.01).onChange(function ()
   {
     model1.transform.setQuaternionAngles(transformSettings.angleX, transformSettings.angleY, transformSettings.angleZ)
   });
 
+  const keyboardEventManager = new KeyboardEventManager(scene, gameManager)
 
   document.addEventListener('keydown', event => {
-    if(event.key == "c") {
-      scene.camera.switchMode()
-    }
-    // if(event.key == "1") {
-    //   gameManager.field.changeSides(gameManager.field.sides - 1)
-    //   gameManager.updatePlayers(gameManager.playerCount)
-    // }
-    // if(event.key == "2") {
-    //   gameManager.field.changeSides(gameManager.field.sides + 1)
-    //   gameManager.updatePlayers(gameManager.playerCount)
-    // }
-    // if(event.key == "9") {
-    //   gameManager.updatePlayers(gameManager.playerCount - 1)
-    // }
-    // if(event.key == "0") {
-    //   gameManager.updatePlayers(gameManager.playerCount + 1)
-    // }
+    keyboardEventManager.KeyDownAction(event)
   })
+
+
+  var width = 1;
+  var height = 1;
+  var buf = new Uint8Array(width * height * 4);
+  var clicked = false
+
+  var initialClick
+
+  document.addEventListener('mousemove', event => {
+    // console.log(event.x)
+    if(clicked && gameStatus == 2) {
+      // console.log(event.x + " " + event.y)
+      // // start dragging the catcher to new position
+      var pos = scene.camera.calculateScreenToWorldCoords(event.x, event.y, canvas.width, canvas.height)
+      // console.log(pos)
+      gameManager.moveCatcherAndPlayer(pos)
+    }
+  })
+
+  document.addEventListener('mouseup', event => {
+    if(gameManager.gameState == 2) gameStatus = gameManager.checkRatioToEndGame()
+    clicked = false
+  })
+
+  document.addEventListener('mousedown', event => {
+    // Get the coordinates of the click
+    // var eventLocation = getEventLocation(this,event);
+    // Get the data of the pixel according to the location generate by the getEventLocation function
+    // var context = canvas.getContext('webgl');
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    const pixelX = x * gl.canvas.width / gl.canvas.clientWidth;
+    const pixelY = gl.canvas.height - y * gl.canvas.height / gl.canvas.clientHeight - 1;
+    const data = new Uint8Array(4);
+    renderer.render(scene, shader, true)
+    gl.readPixels(
+        pixelX,            // x
+        pixelY,            // y
+        1,                 // width
+        1,                 // height
+        gl.RGBA,           // format
+        gl.UNSIGNED_BYTE,  // type
+        data);             // typed array to hold result
+    
+    // console.log(data);
+
+    // console.log(event)
+    // console.log(event.x + " " + event.y)
+    initialClick = scene.camera.calculateScreenToWorldCoords(event.x - 10, event.y - 10, canvas.width, canvas.height)
+    // console.log(pos)
+    console.log(gameManager.gameState)
+    if(gameStatus == 0){ //start the game on click
+      gameStatus = gameManager.triggerGameStart(data)
+    }
+    else if(gameStatus == 1) { // now in rotation and scaling mode, on subsequent click, shift to drag mode 
+      // console.log("started already")
+      gameManager.gameState = 2
+      gameStatus = 2
+      gameManager.moveCatcherAndPlayer(initialClick)
+    }
+    clicked = true
+  });
+
 
   renderer.render(scene, shader, true)
 
@@ -133,7 +188,7 @@ function main() {
 
   function animation () {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(1.0, 1.0, 1.0, 1);
+    gl.clearColor(220/255, 220/255, 220/255, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);

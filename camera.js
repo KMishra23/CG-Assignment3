@@ -82,4 +82,63 @@ export class Camera {
         }
     }
 
+    zoomOut() {
+        if(this.mode == 0) { //looking from z axis
+            vec3.set(this.eyeVec, this.eyeMode0[0], this.eyeMode0[1], this.eyeMode0[2]++)
+
+            this.calculateViewMatrix()
+        }
+        else if(this.mode == 1) {
+            //calculate vector towards target from eye
+        }
+    }
+
+    zoomIn() {
+        if(this.mode == 0) { //looking from z axis
+            vec3.set(this.eyeVec, this.eyeMode0[0], this.eyeMode0[1], this.eyeMode0[2]--)
+
+            this.calculateViewMatrix()
+        }
+    }
+
+    calculateVectorTowardsTarget() {
+
+    }
+
+    calculateScreenToWorldCoords(x, y, canvasW, canvasH) {
+        // this.calculateViewMatrix()
+        // this.calculateProjectionMatrix()
+
+        x /= canvasW
+        x *= 2
+        x -= 1
+        y /= canvasH
+        y *= 2
+        y -= 1
+        y *= -1
+
+        // console.log(x)
+
+        var z = 0.9999886751174927
+        var w = 1
+
+        var pos = vec4.create()
+        vec4.set(pos, x, y, z, w)
+        // console.log(pos)
+
+        var invMat = mat4.create()
+        mat4.multiply(invMat, this.projectionMatrix, this.viewMatrix)
+        mat4.invert(invMat, invMat)
+
+        vec4.transformMat4(pos, pos, invMat)
+
+        var w = pos[3]
+        var ret = [pos[0]/w, pos[1]/w, pos[2]/w, pos[3]/w]
+
+        return ret
+    }
+
+    testMatrices(x, y, z) {
+        var tempVec = vec3
+    }
 }

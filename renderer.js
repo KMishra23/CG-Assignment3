@@ -66,5 +66,29 @@ export class Renderer {
             var count = model.indices.length;
             shader.drawElements(count);
         })
+        scene.arrows.forEach(function(model) {
+            // console.log(model.type)
+            scene.camera.transform.updateModelTransformMatrix()
+            shader.setUniformMatrix4fv("view_matrix", scene.camera.viewMatrix)
+            shader.setUniformMatrix4fv("projection_matrix", scene.camera.projectionMatrix)
+
+            model.transform.updateModelTransformMatrix()
+            shader.setUniformMatrix4fv("u_model_matrix", model.transform.modelTransformMatrix);
+            shader.bindBuffer(model.vertices, shader.positionBuffer);
+        
+            var size = 3;
+            var type = shader.gl.FLOAT;
+            var normalize = false;
+            var stride = 3*model.vertices.BYTES_PER_ELEMENT;
+            var offset = 0;
+            shader.fillAttributeData("a_position", size, type, normalize, stride, offset);
+
+            shader.bindIndexBuffer(model.indices, shader.indexBuffer)
+
+            shader.setUniform4f("u_color", model.color);
+
+            var count = model.indices.length;
+            shader.drawElements(count);
+        })
     }
 }

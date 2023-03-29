@@ -5,6 +5,7 @@ export class Scene {
         // Creates a primitive list and canvas size
         this.primitives = []
         this.models = []
+        this.arrows = []
         this.canvasWidth = width;
         this.canvasHeight = height;
     }
@@ -12,7 +13,7 @@ export class Scene {
     add(primitive) {
         if(this.primitives && primitive) {
             this.primitives.push(primitive)
-            console.log(primitive.type + " was added to the scene")
+            // console.log(primitive.type + " was added to the scene")
         }
     }
 
@@ -21,7 +22,17 @@ export class Scene {
         // console.log(response)
         if(this.models && model) {
             this.models.push(model)
-            console.log(model.type + " was added to the scene")
+            // console.log(model.type + " was added to the scene")
+        }  
+    }
+
+    async addArrow(model) {
+        const response = await model.loadModel()
+        // console.log(response)
+        if((this.models && model) && (this.arrows && model)) {
+            this.arrows.push(model)
+            // this.models.push(model)
+            // console.log(model.type + " was added to the scene")
         }  
     }
 
@@ -47,5 +58,9 @@ export class Scene {
                 this.models.splice(i, 1);
             }
         }
+    }
+
+    clearArrows() {
+        this.arrows = []
     }
 }
