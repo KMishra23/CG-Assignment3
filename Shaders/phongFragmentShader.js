@@ -15,6 +15,7 @@ uniform vec3 specularColor;
 
 uniform int bingLighting[30];
 uniform int numLights;
+uniform bool blinn;
 
 void main() {
   
@@ -30,10 +31,17 @@ void main() {
     float l = max(dot(N, L), 0.0);
     float s = 0.0;
     if(l > 0.0) {
-      vec3 R = reflect(-L, N);
       vec3 V = normalize(-vertPos);
-
-      float specAngle = max(dot(R, V), 0.0);
+      float specAngle;
+      if(blinn) {
+        vec3 H = normalize(L + V);
+        specAngle = max(dot(N, H), 0.0);
+      }
+      else {
+        vec3 R = reflect(-L, N);
+        specAngle = max(dot(R, V), 0.0);
+      }
+      
       s = pow(specAngle, shininessVal);
     }
 
