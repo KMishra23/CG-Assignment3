@@ -31,7 +31,7 @@ let sceneOptions = {
 }
 
 let check = {
-    checkbox: false
+    RotateObjects: false
 };
 
 
@@ -51,8 +51,8 @@ gui.add(sceneOptions, "Scene", ["Shading Spheres", "Texture Mapping", "Test"]).o
     else if(sceneOptions.Scene == "Texture Mapping") {
         gui.removeFolder(spheresMenu)
         texturesMenu = gui.addFolder("Texture Controls")
-        texturesMenu.add(check, 'checkbox').onChange(() => {
-            textureScene.enableDisplay = check.checkbox
+        texturesMenu.add(check, 'RotateObjects').onChange(() => {
+            textureScene.enableDisplay = check.RotateObjects
         })
         currentCamera = textureScene.camera
         currentScene = textureScene.scene
@@ -66,12 +66,15 @@ gui.add(sceneOptions, "Scene", ["Shading Spheres", "Texture Mapping", "Test"]).o
     }
 });
 
-var texturesMenu = gui.addFolder("Texture Controls")
-texturesMenu.add(check, 'checkbox').onChange(() => {
-    textureScene.enableDisplay = check.checkbox
-})
+var texturesMenu;
+var spheresMenu;
 
-var spheresMenu = gui.addFolder("Spheres Control")
+// var texturesMenu = gui.addFolder("Texture Controls")
+// texturesMenu.add(check, 'RotateObjects').onChange(() => {
+//     textureScene.enableDisplay = check.RotateObjects
+// })
+
+spheresMenu = gui.addFolder("Spheres Control")
 spheresMenu.add(shadingOptions, "Shader", ["Gourad", "Phong"]).onChange(() => {
     spheresScene.swapShader(shadingOptions.Shader)
     currentShading = shadingOptions.Shader

@@ -1,0 +1,10 @@
+Team Name: Redgear
+Kaushik Mishra IMT2020137
+Vaibhav Thapliyal IMT2020049
+Karanveer Singh IMT2020099
+
+Github repo for the project: https://github.com/KMishra23/CG-Assignment3
+
+Repo has readme and all the project files
+
+To run the project, delete the node_modules file, run 'npm install' and then 'npx vite'.
