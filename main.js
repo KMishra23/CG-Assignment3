@@ -99,6 +99,9 @@ document.addEventListener('keydown', event => {
     if(event.key == "t") {
         textureScene.changeTextureMapping()
     }
+    if(event.key == "l") {
+        spheresScene.changeNumberOfLights()
+    }
 })
 
 function animate() {

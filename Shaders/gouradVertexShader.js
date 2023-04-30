@@ -1,7 +1,7 @@
 export const gouradVertShader = `
 // attribute vec3 position;
 // attribute vec3 normal;
-// uniform mat4 projection, modelview, normalMat;
+// unifor*m mat4 projection, modelview, normalMat;
 
 varying vec3 normalInterp;
 varying vec3 vertPos;

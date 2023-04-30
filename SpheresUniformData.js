@@ -263,6 +263,9 @@ export class SpheresUniformData {
     }
     
     changeNumberOfLight() {
-
+        this.numLights = (this.numLights+1)%5
+        this.spheresUniformsData = this.SphereUniformDataList()
+        this.spheresMaterialsPhong = this.SpheresMaterialListPhong()
+        this.spheresMaterialsGourad = this.SpheresMaterialListGourad()
     }
 }

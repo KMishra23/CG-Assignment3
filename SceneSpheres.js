@@ -98,4 +98,38 @@ export class SpheresScene {
 
         // console.log(this.phongMaterials)
     }
+
+    changeNumberOfLights() {
+        this.spheresData.changeNumberOfLight()
+        // console.log("ye")
+
+        this.phongMaterials = this.spheresData.spheresMaterialsPhong
+        this.gouradMaterials = this.spheresData.spheresMaterialsGourad
+
+        for(var i = 0; i < 9; i++) {
+            this.scene.remove(this.spheresList[i])
+        }
+        this.spheresList = []
+
+        if(this.type == "Phong") {
+            for(var i = 0; i < 9; i++) {
+                const sphere = new THREE.Mesh(this.sphereGeo, this.phongMaterials[i]);
+                sphere.position.x = this.positionsList[i][0];
+                sphere.position.y = this.positionsList[i][1];
+
+                this.scene.add(sphere);
+                this.spheresList.push(sphere);
+            }
+        }
+        else if(this.type == "Gourad") {
+            for(var i = 0; i < 9; i++) {
+                const sphere = new THREE.Mesh(this.sphereGeo, this.gouradMaterials[i]);
+                sphere.position.x = this.positionsList[i][0];
+                sphere.position.y = this.positionsList[i][1];
+
+                this.scene.add(sphere);
+                this.spheresList.push(sphere);
+            }
+        }
+    }
 }
