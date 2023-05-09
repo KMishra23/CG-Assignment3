@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as dat from 'https://cdn.skypack.dev/dat.gui';
-import { SpheresScene } from './SceneSpheres';
+import { Scenes } from './SceneSpheres';
 import { TextureMapScene } from './SceneTextureMap';
 
 
@@ -12,7 +12,9 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const spheresScene = new SpheresScene()
+const spheresScene = new Scenes(0)
+const cylinderScene = new Scenes(1)
+
 const textureScene = new TextureMapScene()
 
 var currentCamera = spheresScene.camera
@@ -35,7 +37,7 @@ let check = {
 };
 
 
-gui.add(sceneOptions, "Scene", ["Shading Spheres", "Texture Mapping", "Test"]).onChange(() => {
+gui.add(sceneOptions, "Scene", ["Shading Spheres","Shading Cylinder", "Texture Mapping", "Test"]).onChange(() => {
     if(sceneOptions.Scene == "Shading Spheres") {
         gui.removeFolder(texturesMenu)
         spheresMenu = gui.addFolder("Spheres Controls")
@@ -46,6 +48,18 @@ gui.add(sceneOptions, "Scene", ["Shading Spheres", "Texture Mapping", "Test"]).o
 
         currentScene = spheresScene.scene
         currentCamera = spheresScene.camera
+        control = new OrbitControls(currentCamera, renderer.domElement)
+    }
+    else if(sceneOptions.Scene == "Shading Cylinder") {
+        gui.removeFolder(texturesMenu)
+        spheresMenu = gui.addFolder("Cylinder Controls")
+        spheresMenu.add(shadingOptions, "Shader", ["Gourad", "Phong"]).onChange(() => {
+            cylinderScene.swapShader(shadingOptions.Shader)
+            currentShading = shadingOptions.Shader
+        });
+
+        currentScene = cylinderScene.scene
+        currentCamera = cylinderScene.camera
         control = new OrbitControls(currentCamera, renderer.domElement)
     }
     else if(sceneOptions.Scene == "Texture Mapping") {

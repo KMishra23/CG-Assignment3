@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 import { SpheresUniformData } from './SpheresUniformData';
 
-export class SpheresScene {
-    constructor() {
+export class Scenes {
+    constructor(num) {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x0065b3);
         this.camera = new THREE.PerspectiveCamera(30, window.innerWidth/ window.innerHeight, 0.1, 10000);
         this.camera.position.z = 170;
 
-        this.sphereGeo = new THREE.SphereGeometry(10, 30, 30);
+        this.geo = num===0?new THREE.SphereGeometry(10, 30, 30):new THREE.CylinderGeometry(10,10,20);
 
         this.spheresList = []
         this.positionsList = [
@@ -23,7 +23,7 @@ export class SpheresScene {
         this.gouradMaterials = this.spheresData.spheresMaterialsGourad
 
         for(var i = 0; i < 9; i++) {
-            const sphere = new THREE.Mesh(this.sphereGeo, this.phongMaterials[i]);
+            const sphere = new THREE.Mesh(this.geo, this.phongMaterials[i]);
             sphere.position.x = this.positionsList[i][0];
             sphere.position.y = this.positionsList[i][1];
 
@@ -41,19 +41,19 @@ export class SpheresScene {
         if(type == "Gourad") {
             this.spheresList = []
             for(var i = 0; i < 9; i++) {
-                const sphere = new THREE.Mesh(this.sphereGeo, this.gouradMaterials[i]);
+                const sphere = new THREE.Mesh(this.geo, this.gouradMaterials[i]);
                 sphere.position.x = this.positionsList[i][0];
                 sphere.position.y = this.positionsList[i][1];
 
                 this.scene.add(sphere);
-                this.spheresList.push(sphere);
+                tspheresScenehis.spheresList.push(sphere);
             }
             this.type = "Gourad"
         }
         else if(type == "Phong") {
             this.spheresList = []
             for(var i = 0; i < 9; i++) {
-                const sphere = new THREE.Mesh(this.sphereGeo, this.phongMaterials[i]);
+                const sphere = new THREE.Mesh(this.geo, this.phongMaterials[i]);
                 sphere.position.x = this.positionsList[i][0];
                 sphere.position.y = this.positionsList[i][1];
 
@@ -77,7 +77,7 @@ export class SpheresScene {
 
         if(this.type == "Phong") {
             for(var i = 0; i < 9; i++) {
-                const sphere = new THREE.Mesh(this.sphereGeo, this.phongMaterials[i]);
+                const sphere = new THREE.Mesh(this.geo, this.phongMaterials[i]);
                 sphere.position.x = this.positionsList[i][0];
                 sphere.position.y = this.positionsList[i][1];
 
@@ -87,7 +87,7 @@ export class SpheresScene {
         }
         else if(this.type == "Gourad") {
             for(var i = 0; i < 9; i++) {
-                const sphere = new THREE.Mesh(this.sphereGeo, this.gouradMaterials[i]);
+                const sphere = new THREE.Mesh(this.geo, this.gouradMaterials[i]);
                 sphere.position.x = this.positionsList[i][0];
                 sphere.position.y = this.positionsList[i][1];
 
@@ -113,7 +113,7 @@ export class SpheresScene {
 
         if(this.type == "Phong") {
             for(var i = 0; i < 9; i++) {
-                const sphere = new THREE.Mesh(this.sphereGeo, this.phongMaterials[i]);
+                const sphere = new THREE.Mesh(this.geo, this.phongMaterials[i]);
                 sphere.position.x = this.positionsList[i][0];
                 sphere.position.y = this.positionsList[i][1];
 
@@ -123,7 +123,7 @@ export class SpheresScene {
         }
         else if(this.type == "Gourad") {
             for(var i = 0; i < 9; i++) {
-                const sphere = new THREE.Mesh(this.sphereGeo, this.gouradMaterials[i]);
+                const sphere = new THREE.Mesh(this.geo, this.gouradMaterials[i]);
                 sphere.position.x = this.positionsList[i][0];
                 sphere.position.y = this.positionsList[i][1];
 
