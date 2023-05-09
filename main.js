@@ -36,10 +36,17 @@ let check = {
     RotateObjects: false
 };
 
-
-gui.add(sceneOptions, "Scene", ["Shading Spheres","Shading Cylinder", "Texture Mapping", "Test"]).onChange(() => {
+var flagTex = 0
+var flagSph = 1
+var flagCyl = 0
+gui.add(sceneOptions, "Scene", ["Shading Spheres", "Shading Cylinder", "Texture Mapping", "Test"]).onChange(() => {
     if(sceneOptions.Scene == "Shading Spheres") {
-        gui.removeFolder(texturesMenu)
+
+        if(flagTex) gui.removeFolder(texturesMenu)
+        if(flagCyl) gui.removeFolder(cylinderMenu)
+        flagTex = 0
+        flagSph = 1
+        flagCyl = 0
         spheresMenu = gui.addFolder("Spheres Controls")
         spheresMenu.add(shadingOptions, "Shader", ["Gourad", "Phong"]).onChange(() => {
             spheresScene.swapShader(shadingOptions.Shader)
@@ -51,9 +58,14 @@ gui.add(sceneOptions, "Scene", ["Shading Spheres","Shading Cylinder", "Texture M
         control = new OrbitControls(currentCamera, renderer.domElement)
     }
     else if(sceneOptions.Scene == "Shading Cylinder") {
-        gui.removeFolder(texturesMenu)
-        spheresMenu = gui.addFolder("Cylinder Controls")
-        spheresMenu.add(shadingOptions, "Shader", ["Gourad", "Phong"]).onChange(() => {
+
+        if(flagTex) gui.removeFolder(texturesMenu)
+        if(flagSph) gui.removeFolder(spheresMenu)
+        flagTex = 0
+        flagSph = 0
+        flagCyl = 1
+        cylinderMenu = gui.addFolder("Cylinder Controls")
+        cylinderMenu.add(shadingOptions, "Shader", ["Gourad", "Phong"]).onChange(() => {
             cylinderScene.swapShader(shadingOptions.Shader)
             currentShading = shadingOptions.Shader
         });
@@ -63,7 +75,12 @@ gui.add(sceneOptions, "Scene", ["Shading Spheres","Shading Cylinder", "Texture M
         control = new OrbitControls(currentCamera, renderer.domElement)
     }
     else if(sceneOptions.Scene == "Texture Mapping") {
-        gui.removeFolder(spheresMenu)
+
+        if(flagSph) gui.removeFolder(spheresMenu)
+        if(flagCyl) gui.removeFolder(cylinderMenu)
+        flagTex = 1
+        flagSph = 0
+        flagCyl = 0
         texturesMenu = gui.addFolder("Texture Controls")
         texturesMenu.add(check, 'RotateObjects').onChange(() => {
             textureScene.enableDisplay = check.RotateObjects
@@ -82,6 +99,7 @@ gui.add(sceneOptions, "Scene", ["Shading Spheres","Shading Cylinder", "Texture M
 
 var texturesMenu;
 var spheresMenu;
+var cylinderMenu;
 
 // var texturesMenu = gui.addFolder("Texture Controls")
 // texturesMenu.add(check, 'RotateObjects').onChange(() => {
@@ -100,21 +118,25 @@ document.addEventListener('keydown', event => {
     if(event.key == "s") {
         if(currentShading == "Phong"){
             spheresScene.swapShader("Gourad")
+            cylinderScene.swapShader("Gourad")
             currentShading = "Gourad"
         }
         else {
             spheresScene.swapShader("Phong")
+            cylinderScene.swapShader("Phong")
             currentShading = "Phong"
         }
     }
     if(event.key == "a") {
         spheresScene.changeLocalIllumModel()
+        cylinderScene.changeLocalIllumModel()
     }
     if(event.key == "t") {
         textureScene.changeTextureMapping()
     }
     if(event.key == "l") {
         spheresScene.changeNumberOfLights()
+        cylinderScene.changeNumberOfLights()
     }
 })
 

@@ -46,7 +46,7 @@ export class Scenes {
                 sphere.position.y = this.positionsList[i][1];
 
                 this.scene.add(sphere);
-                tspheresScenehis.spheresList.push(sphere);
+                this.spheresList.push(sphere);
             }
             this.type = "Gourad"
         }
